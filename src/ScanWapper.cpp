@@ -49,5 +49,6 @@ TW_UINT16 FAR PASCAL DSMCallback(pTW_IDENTITY _pOrigin,pTW_IDENTITY _pDest,
 			break;
 		}
 	}
+	wapperImpl.DoNextWinMsg();
  	return twrc;
 }

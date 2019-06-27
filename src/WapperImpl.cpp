@@ -139,6 +139,13 @@ void WapperImpl::setOutPath(const char* path)
 {
 	mPath = path;
 }
+void WapperImpl::DoNextWinMsg()
+{
+	if(mUsrUI)
+		::PostMessage(mUsrUI,WM_PAINT,0,0);
+	else
+		::PostMessage(mWinUI,WM_PAINT,0,0);
+}
 bool WapperImpl::Start()
 {
 	if(mTwainApp==NULL)
@@ -153,6 +160,7 @@ bool WapperImpl::Start()
 	}
 	mTwainApp->m_DSMessage = -1;
 	bool bDs = false;
+	mLastMsg.empty();
 	bDs = mTwainApp->enableDS(mUsrUI?mUsrUI:mWinUI,bShowUI);
 	mLastMsg = (wchar_t*)CA2W(mTwainApp->m_msg.c_str());
 	if(bDs==false)

@@ -27,6 +27,7 @@ public:
 	void setOutPath(const char* path);
 	void OnScanOneFile(const char *path);
 	void OnScanEnd();
+	void DoNextWinMsg();
 protected:
 	void DestoryUI();
  	size_t GetAllDevs();

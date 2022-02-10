@@ -2,7 +2,7 @@
 #include "WapperImpl.h"
 #include "TwainApp.h"
 #include "CapabilityImpl.h"
-#include "Dir.h"
+#include "dir/Dir.h"
 WapperImpl wapperImpl;
 namespace UI
 {

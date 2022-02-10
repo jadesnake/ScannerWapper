@@ -501,7 +501,8 @@ void TwainApp::loadDS(const TW_INT32 _dsID)
 		{
 			if(TWRC_SUCCESS != (twrc = DSM_Entry(DG_CONTROL, DAT_CALLBACK, MSG_REGISTER_CALLBACK, (TW_MEMREF)&callback)))
 			{
-				m_msg = PrintCMDMessage("DG_CONTROL / DAT_CALLBACK / MSG_REGISTER_CALLBACK Failed: %u", twrc);
+				//m_msg = PrintCMDMessage("DG_CONTROL / DAT_CALLBACK / MSG_REGISTER_CALLBACK Failed: %u", twrc);
+				m_msg = "";
 			}
 			else
 			{
@@ -510,7 +511,8 @@ void TwainApp::loadDS(const TW_INT32 _dsID)
 		}
 		else
 		{
-			m_msg = PrintCMDMessage("DG_CONTROL / DAT_CALLBACK / MSG_REGISTER_CALLBACK not supported");
+			//m_msg = PrintCMDMessage("DG_CONTROL / DAT_CALLBACK / MSG_REGISTER_CALLBACK not supported");
+			m_msg = "";
 		}
 		break;
 	default:

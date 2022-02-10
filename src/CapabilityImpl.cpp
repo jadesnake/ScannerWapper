@@ -313,9 +313,9 @@ bool CapabilityImpl::SetValue(const std::string& var)
 		break;
 	case TWTY_BOOL:
 		{
-			if(wantVal=="false")
+			if(wantVal=="0")
 				twrc = mApp->set_CapabilityOneValue(CapID, 0, type);
-			else if(wantVal=="true")
+			else if(wantVal=="1")
 				twrc = mApp->set_CapabilityOneValue(CapID, 1, type);
 			else
 				return false;

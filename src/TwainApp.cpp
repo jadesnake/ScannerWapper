@@ -1797,49 +1797,25 @@ TW_UINT16 TwainApp::set_CapabilityOneValue(TW_UINT16 Cap, const std::string& _va
 	pTW_ONEVALUE pVal = (pTW_ONEVALUE)_DSM_LockMemory(cap.hContainer);
 	pVal->ItemType  = _type;
 	// using memcpy fixes: error C2220: warning treated as error - no 'object' file generated
+	TW_UINT32 twSize = sizeof(TW_ONEVALUE);
 	void *ptr = 0;
-	switch(_type)
+	switch (_type)
 	{
+	case TWTY_FIX32:
+	case TWTY_FRAME:
 	case TWTY_STR32:
-		{
-			pTW_STR32 pStr = (pTW_STR32)_DSM_Alloc(sizeof(TW_STR32));
-			if(pStr)
-				strncpy(pStr,_value.c_str(),32);
-			pStr[32] = 0;
-			ptr = (void*)pStr;
-			pVal->Item = (TW_UINT32)(void*)pStr;
-		}
-		break;
 	case TWTY_STR64:
-		{
-			pTW_STR64 pStr = (pTW_STR64)_DSM_Alloc(sizeof(TW_STR64));
-			if(pStr)
-				strncpy(pStr,_value.c_str(),64);
-			pStr[64] = 0;
-			ptr = (void*)pStr;
-			pVal->Item = (TW_UINT32)(void*)pStr;
-		}
-		break;
 	case TWTY_STR128:
-		{
-			pTW_STR128 pStr = (pTW_STR128)_DSM_Alloc(sizeof(TW_STR128));
-			if(pStr)
-				strncpy(pStr,_value.c_str(),128);
-			pStr[128] = 0;
-			ptr = (void*)pStr;
-			pVal->Item = (TW_UINT32)(void*)pStr;
-		}
-		break;
 	case TWTY_STR255:
-		{
-			pTW_STR255 pStr = (pTW_STR255)_DSM_Alloc(sizeof(TW_STR255));
-			if(pStr)
-				strncpy(pStr,_value.c_str(),255);
-			pStr[255] = 0;
-			ptr = (void*)pStr;
-			pVal->Item = (TW_UINT32)(void*)pStr;
-		}
+		//these are too big to fit in a simple TW_ONEVALUE
+		twSize += getTWTYsize(_type);
 		break;
+	}
+	cap.hContainer = _DSM_Alloc(twSize);
+	if(cap.hContainer)
+	{
+		pTW_ONEVALUE pOne = static_cast<pTW_ONEVALUE>(_DSM_LockMemory(cap.hContainer));
+		memcpy(&pOne->Item, _value.c_str(), getTWTYsize(_type));
 	}
 	// capability structure is set, make the call to the source now
 	twrc = DSM_Entry( DG_CONTROL, DAT_CAPABILITY, MSG_SET, (TW_MEMREF)&(cap));

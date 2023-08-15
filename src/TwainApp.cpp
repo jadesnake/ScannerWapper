@@ -1784,25 +1784,13 @@ TW_UINT16 TwainApp::set_CapabilityOneValue(TW_UINT16 Cap, const int _value, TW_U
 }
 TW_UINT16 TwainApp::set_CapabilityOneValue(TW_UINT16 Cap, const std::string& _value, TW_UINT16 _type)
 {
-	TW_INT16        twrc = TWRC_FAILURE;
-	TW_CAPABILITY   cap;
-	cap.Cap         = Cap;
-	cap.ConType     = TWON_ONEVALUE;
-	cap.hContainer  = _DSM_Alloc(sizeof(TW_ONEVALUE));// Largest int size
-	if(0 == cap.hContainer)
-	{
-		printError(0, "Error allocating memory");
-		return twrc;
-	}
-	pTW_ONEVALUE pVal = (pTW_ONEVALUE)_DSM_LockMemory(cap.hContainer);
-	pVal->ItemType  = _type;
-	// using memcpy fixes: error C2220: warning treated as error - no 'object' file generated
+	TW_UINT16 twrc = TWRC_FAILURE;
+	TW_CAPABILITY cap = {0,0,0};
+	cap.Cap = Cap;
+	cap.ConType = TWON_ONEVALUE;
 	TW_UINT32 twSize = sizeof(TW_ONEVALUE);
-	void *ptr = 0;
 	switch (_type)
 	{
-	case TWTY_FIX32:
-	case TWTY_FRAME:
 	case TWTY_STR32:
 	case TWTY_STR64:
 	case TWTY_STR128:
@@ -1812,25 +1800,34 @@ TW_UINT16 TwainApp::set_CapabilityOneValue(TW_UINT16 Cap, const std::string& _va
 		break;
 	}
 	cap.hContainer = _DSM_Alloc(twSize);
-	if(cap.hContainer)
+	if (NULL == cap.hContainer)
 	{
-		pTW_ONEVALUE pOne = static_cast<pTW_ONEVALUE>(_DSM_LockMemory(cap.hContainer));
+		printError(NULL, "Error allocating memory");
+		return twrc;
+	}
+	pTW_ONEVALUE pOne = static_cast<pTW_ONEVALUE>(_DSM_LockMemory(cap.hContainer));
+	if (pOne)
+	{
+		pOne->ItemType = _type;
 		memcpy(&pOne->Item, _value.c_str(), getTWTYsize(_type));
-	}
-	// capability structure is set, make the call to the source now
-	twrc = DSM_Entry( DG_CONTROL, DAT_CAPABILITY, MSG_SET, (TW_MEMREF)&(cap));
-	if(TWRC_CHECKSTATUS == twrc)
-	{
+		// capability structure is set, make the call to the source now
+		twrc = DSM_Entry(DG_CONTROL, DAT_CAPABILITY, MSG_SET, (TW_MEMREF)&(cap));
+		if (TWRC_CHECKSTATUS == twrc)
+		{
 
+		}
+		else if (TWRC_FAILURE == twrc)
+		{
+			string strErr = "Could not set capability: [";
+			strErr += convertCAP_toString(Cap);
+			strErr += "]";
+			printError(m_pDataSource, strErr);
+		}
+		_DSM_UnlockMemory(cap.hContainer);
+		//Free the memory
+		_DSM_Free(cap.hContainer);
+		cap.hContainer = NULL;
 	}
-	else if(TWRC_FAILURE == twrc)
-	{
-		printError(m_pDataSource, "Could not set capability");
-	}
-	if(ptr)
-		_DSM_Free(ptr);
-	_DSM_UnlockMemory(cap.hContainer);
-	_DSM_Free(cap.hContainer);
 	return twrc;
 }
 //////////////////////////////////////////////////////////////////////////////

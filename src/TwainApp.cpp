@@ -1795,6 +1795,7 @@ TW_UINT16 TwainApp::set_CapabilityOneValue(TW_UINT16 Cap, const std::string& _va
 	case TWTY_STR64:
 	case TWTY_STR128:
 	case TWTY_STR255:
+	case TWTY_STR1024:
 		//these are too big to fit in a simple TW_ONEVALUE
 		twSize += getTWTYsize(_type);
 		break;

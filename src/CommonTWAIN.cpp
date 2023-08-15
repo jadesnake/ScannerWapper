@@ -143,108 +143,106 @@ bool getCurrent(TW_CAPABILITY *pCap, TW_UINT32& val)
 //////////////////////////////////////////////////////////////////////////////
 bool getCurrent(TW_CAPABILITY *pCap, string& val)
 {
-  bool bret = false;
+	bool bret = false;
+	if(NULL != pCap->hContainer)
+	{
+		if(TWON_ENUMERATION == pCap->ConType)
+		{
+			pTW_ENUMERATION pCapPT = (pTW_ENUMERATION)_DSM_LockMemory(pCap->hContainer);
+			switch(pCapPT->ItemType)
+			{
+			case TWTY_STR32:
+				{
+					pTW_STR32 pStr = &((pTW_STR32)(&pCapPT->ItemList))[pCapPT->CurrentIndex];
+					// In case the Capability is not null terminated
+					pStr[32] = 0;
+					val = pStr;
+					bret = true;
+				}
+				break;
 
-  if(0 != pCap->hContainer)
-  {
-    if(TWON_ENUMERATION == pCap->ConType)
-    {
-      pTW_ENUMERATION pCapPT = (pTW_ENUMERATION)_DSM_LockMemory(pCap->hContainer);
-      switch(pCapPT->ItemType)
-      {
-      case TWTY_STR32:
-        {
-          pTW_STR32 pStr = &((pTW_STR32)(&pCapPT->ItemList))[pCapPT->CurrentIndex];
-          // In case the Capability is not null terminated
-          pStr[32] = 0;
-          val = pStr;
-          bret = true;
-        }
-        break;
+			case TWTY_STR64:
+				{
+					pTW_STR64 pStr = &((pTW_STR64)(&pCapPT->ItemList))[pCapPT->CurrentIndex];
+					// In case the Capability is not null terminated
+					pStr[64] = 0;
+					val = pStr;
+					bret = true;
+				}
+				break;
 
-      case TWTY_STR64:
-        {
-          pTW_STR64 pStr = &((pTW_STR64)(&pCapPT->ItemList))[pCapPT->CurrentIndex];
-          // In case the Capability is not null terminated
-          pStr[64] = 0;
-          val = pStr;
-          bret = true;
-        }
-        break;
+			case TWTY_STR128:
+				{
+					pTW_STR128 pStr = &((pTW_STR128)(&pCapPT->ItemList))[pCapPT->CurrentIndex];
+					// In case the Capability is not null terminated
+					pStr[128] = 0;
+					val = pStr;
+					bret = true;
+				}
+				break;
 
-      case TWTY_STR128:
-        {
-          pTW_STR128 pStr = &((pTW_STR128)(&pCapPT->ItemList))[pCapPT->CurrentIndex];
-          // In case the Capability is not null terminated
-          pStr[128] = 0;
-          val = pStr;
-          bret = true;
-        }
-        break;
+			case TWTY_STR255:
+				{
+					pTW_STR255 pStr = &((pTW_STR255)(&pCapPT->ItemList))[pCapPT->CurrentIndex];
+					// In case the Capability is not null terminated
+					pStr[255] = 0;
+					val = pStr;
+					bret = true;
+				}
+				break;
+			}
+			_DSM_UnlockMemory(pCap->hContainer);
+		}
+		else if(TWON_ONEVALUE == pCap->ConType)
+		{
+			pTW_ONEVALUE pCapPT = (pTW_ONEVALUE)_DSM_LockMemory(pCap->hContainer);
 
-      case TWTY_STR255:
-        {
-          pTW_STR255 pStr = &((pTW_STR255)(&pCapPT->ItemList))[pCapPT->CurrentIndex];
-          // In case the Capability is not null terminated
-          pStr[255] = 0;
-          val = pStr;
-          bret = true;
-        }
-        break;
-      }
-      _DSM_UnlockMemory(pCap->hContainer);
-    }
-    else if(TWON_ONEVALUE == pCap->ConType)
-    {
-      pTW_ONEVALUE pCapPT = (pTW_ONEVALUE)_DSM_LockMemory(pCap->hContainer);
+			switch(pCapPT->ItemType)
+			{
+			case TWTY_STR32:
+				{
+					pTW_STR32 pStr = ((pTW_STR32)(&pCapPT->Item));
+					// In case the Capability is not null terminated
+					pStr[32] = 0;
+					val = pStr;
+					bret = true;
+				}
+				break;
 
-      switch(pCapPT->ItemType)
-      {
-      case TWTY_STR32:
-        {
-          pTW_STR32 pStr = ((pTW_STR32)(&pCapPT->Item));
-          // In case the Capability is not null terminated
-          pStr[32] = 0;
-          val = pStr;
-          bret = true;
-        }
-        break;
+			case TWTY_STR64:
+				{
+					pTW_STR64 pStr = ((pTW_STR64)(&pCapPT->Item));
+					// In case the Capability is not null terminated
+					pStr[64] = 0;
+					val = pStr;
+					bret = true;
+				}
+				break;
 
-      case TWTY_STR64:
-        {
-          pTW_STR64 pStr = ((pTW_STR64)(&pCapPT->Item));
-          // In case the Capability is not null terminated
-          pStr[64] = 0;
-          val = pStr;
-          bret = true;
-        }
-        break;
+			case TWTY_STR128:
+				{
+					pTW_STR128 pStr = ((pTW_STR128)(&pCapPT->Item));
+					// In case the Capability is not null terminated
+					pStr[128] = 0;
+					val = pStr;
+					bret = true;
+				}
+				break;
 
-      case TWTY_STR128:
-        {
-          pTW_STR128 pStr = ((pTW_STR128)(&pCapPT->Item));
-          // In case the Capability is not null terminated
-          pStr[128] = 0;
-          val = pStr;
-          bret = true;
-        }
-        break;
-
-      case TWTY_STR255:
-        {
-          pTW_STR255 pStr = ((pTW_STR255)(&pCapPT->Item));
-          // In case the Capability is not null terminated
-          pStr[255] = 0;
-          val = pStr;
-          bret = true;
-        }
-        break;
-      }
-      _DSM_UnlockMemory(pCap->hContainer);
-    }
-  }
-
-  return bret;
+			case TWTY_STR255:
+				{
+					pTW_STR255 pStr = ((pTW_STR255)(&pCapPT->Item));
+					// In case the Capability is not null terminated
+					pStr[255] = 0;
+					val = pStr;
+					bret = true;
+				}
+				break;
+			}
+			_DSM_UnlockMemory(pCap->hContainer);
+		}
+	}
+	return bret;
 }
 //////////////////////////////////////////////////////////////////////////////
 
@@ -407,83 +405,78 @@ bool GetItem(TW_CAPABILITY *pCap, TW_UINT32 item, TW_UINT32& val)
 //////////////////////////////////////////////////////////////////////////////
 bool GetItem(TW_CAPABILITY *pCap, TW_UINT32 item, string& val)
 {
-  bool bret = false;
+	bool bret = false;
+	if(NULL != pCap && NULL != pCap->hContainer)
+	{
+		if( TWON_ARRAY == pCap->ConType || TWON_ENUMERATION == pCap->ConType )
+		{
+			TW_UINT8 *pData = NULL;
+			unsigned int Count = 0;
+			TW_UINT16 Type  = 0;
+			if( TWON_ARRAY == pCap->ConType )
+			{
+				pTW_ARRAY pArray = (pTW_ARRAY)_DSM_LockMemory(pCap->hContainer);
+				Count = pArray->NumItems;
+				Type  = pArray->ItemType;
+				pData = &pArray->ItemList[0];
+			}
 
-  if(0 != pCap && 0 != pCap->hContainer)
-  {
-    if( TWON_ARRAY == pCap->ConType
-     || TWON_ENUMERATION == pCap->ConType )
-    {
-      TW_UINT8 *pData = NULL;
-      unsigned int      Count = 0;
-      TW_UINT16 Type  = 0;
+			if( TWON_ENUMERATION == pCap->ConType )
+			{
+				pTW_ENUMERATION pEnumeration =static_cast<pTW_ENUMERATION>(_DSM_LockMemory(pCap->hContainer));
+				Count = pEnumeration->NumItems;
+				Type  = pEnumeration->ItemType;
+				pData = &pEnumeration->ItemList[0];
+			}
+			if(item < Count)
+			{
+				switch(Type)
+				{
+				case TWTY_STR32:
+					{
+						pTW_STR32 pStr = &((pTW_STR32)(pData))[item];
+						// In case the Capability is not null terminated
+						pStr[32] = 0;
+						val = pStr;
+						bret = true;
+					}
+					break;
 
-      if( TWON_ARRAY == pCap->ConType )
-      {
-        pTW_ARRAY pArray = (pTW_ARRAY)_DSM_LockMemory(pCap->hContainer);
-        Count = pArray->NumItems;
-        Type  = pArray->ItemType;
-        pData = &pArray->ItemList[0];
-      }
+				case TWTY_STR64:
+					{
+						pTW_STR64 pStr = &((pTW_STR64)(pData))[item];
+						// In case the Capability is not null terminated
+						pStr[64] = 0;
+						val = pStr;
+						bret = true;
+					}
+					break;
 
-      if( TWON_ENUMERATION == pCap->ConType )
-      {
-        pTW_ENUMERATION pEnumeration = (pTW_ENUMERATION)_DSM_LockMemory(pCap->hContainer);
-        Count = pEnumeration->NumItems;
-        Type  = pEnumeration->ItemType;
-        pData = &pEnumeration->ItemList[0];
-      }
-      
-      if(item < Count)
-      {
-        switch(Type)
-        {
-        case TWTY_STR32:
-          {
-            pTW_STR32 pStr = &((pTW_STR32)(pData))[item];
-            // In case the Capability is not null terminated
-            pStr[32] = 0;
-            val = pStr;
-            bret = true;
-          }
-          break;
+				case TWTY_STR128:
+					{
+						pTW_STR128 pStr = &((pTW_STR128)(pData))[item];
+						// In case the Capability is not null terminated
+						pStr[128] = 0;
+						val = pStr;
+						bret = true;
+					}
+					break;
 
-        case TWTY_STR64:
-          {
-            pTW_STR64 pStr = &((pTW_STR64)(pData))[item];
-            // In case the Capability is not null terminated
-            pStr[64] = 0;
-            val = pStr;
-            bret = true;
-          }
-          break;
-
-        case TWTY_STR128:
-          {
-            pTW_STR128 pStr = &((pTW_STR128)(pData))[item];
-            // In case the Capability is not null terminated
-            pStr[128] = 0;
-            val = pStr;
-            bret = true;
-          }
-          break;
-
-        case TWTY_STR255:
-          {
-            pTW_STR255 pStr = &((pTW_STR255)(pData))[item];
-            // In case the Capability is not null terminated
-            pStr[255] = 0;
-            val = pStr;
-            bret = true;
-          }
-          break;
-        }
-      }
-      _DSM_UnlockMemory(pCap->hContainer);
-    }
-  }
-
-  return bret;
+				case TWTY_STR255:
+					{
+						pTW_STR255 pStr = &((pTW_STR255)(pData))[item];
+						// In case the Capability is not null terminated
+						pStr[255] = 0;
+						val = pStr;
+						bret = true;
+					}
+					break;
+				}
+			}
+			_DSM_UnlockMemory(pCap->hContainer);
+		}
+	}
+	return bret;
 }
 
 //////////////////////////////////////////////////////////////////////////////

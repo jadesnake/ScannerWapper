@@ -423,7 +423,6 @@ pTW_IDENTITY TwainApp::selectDefaultDataSource()
 	return &_gSource;
 }
 
-
 //////////////////////////////////////////////////////////////////////////////
 void TwainApp::loadDS(const TW_INT32 _dsID)
 {
